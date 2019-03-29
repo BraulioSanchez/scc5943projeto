@@ -10,8 +10,9 @@ import argparse
 parser = argparse.ArgumentParser(description='Long-Short Term Memory')
 parser.add_argument('--data', help='Dataset with Prices Stock', dest='DATA')
 parser.add_argument('--epochs', help='Epochs for training', dest='EPOCHS', default=5)
-parser.add_argument('--optimizer', help='Model optimizer', dest='OPTIMIZER', choices=['adam','nadam'])
+parser.add_argument('--optimizer', help='Model optimizer', dest='OPTIMIZER', choices=['adam','nadam'], default='adam')
 parser.add_argument('--model', help='Model for Prediction', dest='MODEL', default='LSTM', choices=['LSTM','GRU'])
+parser.add_argument('--time_ahead', help='Days to predict in advance', dest='TIME_AHEAD')
 args = parser.parse_args()
 
 import keras
@@ -24,7 +25,6 @@ tf.logging.set_verbosity(tf.logging.ERROR)
 
 #constantes
 TEST_SIZE = .3
-TIME_AHEAD = 1 #dias a prever
 BATCH_SIZE = 1
 UNITS = 25
 
@@ -45,15 +45,11 @@ train, test = train_test_split(prices, test_size=TEST_SIZE, shuffle=False)
 print('dimensions of train:', train.shape)
 print('dimensions of test:', test.shape)
 
-X_train, y_train = to_1dimension(train, TIME_AHEAD)
-X_test, y_test = to_1dimension(test, TIME_AHEAD)
+X_train, y_train = to_1dimension(train, int(args.TIME_AHEAD))
+X_test, y_test = to_1dimension(test, int(args.TIME_AHEAD))
 
-#LSTM
-model = create_model(model_name=args.MODEL, units=UNITS, time_ahead=TIME_AHEAD)
-'''Para otimização, usamos o algoritmo ADAM.
-    Em séries temporais, os métodos de otimização adaptativa
-    tendem a obter melhores resultados do que os métodos
-    tradicionais de descida de gradiente estocástica.'''
+#Modelo
+model = create_model(model_name=args.MODEL, units=UNITS, time_ahead=int(args.TIME_AHEAD))
 model.compile(optimizer=args.OPTIMIZER, loss='mean_squared_error')
 model.fit(X_train, y_train, epochs=int(args.EPOCHS), batch_size=BATCH_SIZE, verbose=2)
 
@@ -68,6 +64,6 @@ print('MSE: %.2f' % error)
 
 pred_train = model.predict(X_train)
 pred_train = scaler.inverse_transform(pred_train)
-plot_series_prediction(prices_origin, pred_train, pred_test, time_ahead=TIME_AHEAD,
+plot_series_prediction(prices_origin, pred_train, pred_test, time_ahead=int(args.TIME_AHEAD),
                         title='Predictions', xlabel='Days', ylabel='Prices of AMZN Stock',
                         legend=['Opening prices', 'Training set', 'Test prediction'])
