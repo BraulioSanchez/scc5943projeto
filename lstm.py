@@ -10,11 +10,12 @@ import argparse
 parser = argparse.ArgumentParser(description='Long-Short Term Memory')
 parser.add_argument('--data', help='Dataset with Prices Stock', dest='DATA')
 parser.add_argument('--epochs', help='Epochs for training', dest='EPOCHS', default=5)
-parser.add_argument('--model', help='Model for Prediction', dest='MODEL', default='LSTM')
+parser.add_argument('--optimizer', help='Model optimizer', dest='OPTIMIZER', choices=['adam','nadam'])
+parser.add_argument('--model', help='Model for Prediction', dest='MODEL', default='LSTM', choices=['LSTM','GRU'])
 args = parser.parse_args()
 
 import keras
-from keras.layers import Dense, Activation, LSTM, GRU
+from keras.layers import LSTM, GRU
 import tensorflow as tf
 from utils import to_1dimension, create_model, plot_series_prediction
 
@@ -53,7 +54,7 @@ model = create_model(model_name=args.MODEL, units=UNITS, time_ahead=TIME_AHEAD)
     Em séries temporais, os métodos de otimização adaptativa
     tendem a obter melhores resultados do que os métodos
     tradicionais de descida de gradiente estocástica.'''
-model.compile(optimizer='adam', loss='mean_squared_error')
+model.compile(optimizer=args.OPTIMIZER, loss='mean_squared_error')
 model.fit(X_train, y_train, epochs=int(args.EPOCHS), batch_size=BATCH_SIZE, verbose=2)
 
 #recuperamos os valores originais em y_test e prices
