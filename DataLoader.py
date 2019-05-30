@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 class DataLoader():
 
@@ -11,12 +12,32 @@ class DataLoader():
         self.len_train = len(self.data_train)
         self.len_train_windows = None
 
+    def get_train_data(self, seq_len):
+        data_x = []
+        data_y = []
+        for i in range(self.len_train - seq_len):
+            x, y = self.get_next_window(i, seq_len)
+            data_x.append(x)
+            data_y.append(y)
+
+        return np.array(data_x), np.array(data_y)
+
+    def get_next_window(self, i, seq_len):
+        window = self.data_train[i:i+seq_len]
+        
+        x = window[:-1]
+        y = window[-1, [0]]
+        return x, y
+
 if __name__ == "__main__":
     import json
     import os
     configs = json.load(open('config.json', 'r'))
 
-    data = DataLoader(os.path.join(configs['data']['save_dir'], configs['data']['ticker'] + '.csv'),
+    dataloader = DataLoader(os.path.join(configs['data']['save_dir'], configs['data']['symbol'] + '.csv'),
                         configs['data']['train_test_split'],
                         configs['data']['column'])
-    print(data.data.shape, data.data_train.shape, data.data_test.shape)
+    print(dataloader.data.shape, dataloader.data_train.shape, dataloader.data_test.shape)
+    
+    X_train, y_train = dataloader.get_train_data(configs['data']['sequence_length'])
+    print(X_train.shape, y_train.shape)

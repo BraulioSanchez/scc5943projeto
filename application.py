@@ -34,8 +34,8 @@ if __name__ == "__main__":
         preprocessing.denoise(amzn_dataloader.data, configs)
         all_data.update({correlate: preprocessing.denoised})
 
+    # save all data preprocessing
     dataframe = pd.DataFrame(all_data)
-
     dataframe.to_csv(os.path.join(configs['preprocessing']['save_dir'], configs['preprocessing']['filename']),
                         index=False)
 
