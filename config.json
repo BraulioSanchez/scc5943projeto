@@ -1,6 +1,6 @@
 {
 	"data": {
-		"ticker": "AMZN",
+		"symbol": "AMZN",
 		"column": [
 			"Close"
 		],

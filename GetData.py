@@ -27,7 +27,7 @@ if __name__ == "__main__":
     import json
     configs = json.load(open('config.json', 'r'))
 
-    data = GetData(configs['data']['ticker'],
+    data = GetData(configs['data']['symbol'],
                     configs['data']['start'],
                     configs['data']['end'],
                     configs)

@@ -10,18 +10,18 @@ import pandas as pd
 if __name__ == "__main__":
     configs = json.load(open('config.json', 'r'))
 
-    GetData(configs['data']['ticker'],
+    GetData(configs['data']['symbol'],
                         configs['data']['start'],
                         configs['data']['end'],
                         configs).get_stock_data()
-    amzn_dataloader = DataLoader(os.path.join(configs['data']['save_dir'], configs['data']['ticker'] + '.csv'),
+    amzn_dataloader = DataLoader(os.path.join(configs['data']['save_dir'], configs['data']['symbol'] + '.csv'),
                         configs['data']['train_test_split'],
                         configs['data']['column'])
 
     preprocessing = PreProcessing()
     preprocessing.denoise(amzn_dataloader.data, configs)
 
-    all_data = {configs['data']['ticker']: preprocessing.denoised}
+    all_data = {configs['data']['symbol']: preprocessing.denoised}
 
     for correlate in configs['data']['correlates_to']:
         GetData(correlate,

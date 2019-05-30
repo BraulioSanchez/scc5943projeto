@@ -7,22 +7,22 @@ class PreProcessing:
     def denoise(self, series, configs):
         #performs scale
         scaler = MinMaxScaler(feature_range=(-1,1))
-        series_sc = scaler.fit_transform(np.array(series).reshape(-1,1)).reshape(series.shape)
+        scaled = scaler.fit_transform(np.array(series).reshape(-1,1)).reshape(series.shape)
 
         #WaveShrink
-        cA, cD = pywt.dwt(series_sc, configs['preprocessing']['denoise']['wavelet'])
+        cA, cD = pywt.dwt(scaled, configs['preprocessing']['denoise']['wavelet'])
         #threshold selection
-        thr = np.std(series_sc)/23
+        thr = np.std(scaled)/23
         cA_shrinked = pywt.threshold(cA, thr, mode=configs['preprocessing']['denoise']['thr_mode'])
         cD_shrinked = pywt.threshold(cD, thr, mode=configs['preprocessing']['denoise']['thr_mode'])
         #reconstructs data from the given shrinked coefficients
-        series_rec = pywt.idwt(cA_shrinked, cD_shrinked, configs['preprocessing']['denoise']['wavelet'])
+        denoised = pywt.idwt(cA_shrinked, cD_shrinked, configs['preprocessing']['denoise']['wavelet'])
 
-        if len(series_rec) > len(series_sc):
-            series_rec = series_rec[:-1]
+        if len(denoised) > len(scaled):
+            denoised = denoised[:-1]
 
-        self.scaled = series_sc.flatten()
-        self.denoised = series_rec.flatten()
+        self.scaled = scaled.flatten()
+        self.denoised = denoised.flatten()
 
 if __name__ == "__main__":
     stock_data = pd.read_csv('./data/MSI.csv')
