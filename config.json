@@ -4,19 +4,16 @@
 		"column": [
 			"Close"
 		],
-		"start": "2000-01-01",
+		"start": "2008-04-01",
 		"end": "2019-10-01",
 		"sequence_length": 50,
 		"train_test_split": 0.85,
-		"normalise": true,
 		"save_dir": "data",
 		"correlates_to": [
 			"NOV",
 			"EQIX",
 			"CTAS",
-			"DPS",
 			"CRM",
-			"EW",
 			"BSX",
 			"IT",
 			"V",
@@ -24,6 +21,14 @@
 			"CLX",
 			"WAT"
 		]
+	},
+	"preprocessing": {
+		"denoise": {
+			"wavelet": "haar",
+			"thr_mode": "garotte"
+		},
+		"filename": "preprocessed.csv",
+		"save_dir": "preprocessing"
 	},
 	"training": {
 		"epochs": 2,
