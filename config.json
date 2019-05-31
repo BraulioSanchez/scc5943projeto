@@ -54,6 +54,7 @@
 			{
 				"type": "lstm",
 				"neurons": 20,
+				"activation": "relu",
 				"return_sequences": true
 			},
 			{

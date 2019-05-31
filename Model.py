@@ -1,5 +1,8 @@
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, LSTM, RepeatVector, TimeDistributed
+import tensorflow as tf
+
+tf.logging.set_verbosity(tf.logging.ERROR)
 
 class Model():
 
