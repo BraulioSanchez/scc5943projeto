@@ -31,6 +31,8 @@ class Model():
                     activation = layer['layer']['activation'] if 'activation' in layer['layer'] else None
                     self.model.add(TimeDistributed(Dense(units=neurons, activation=activation)))
 
+        self.model.compile(loss=configs['model']['loss'], optimizer=configs['model']['optimizer'])
+
 
 if __name__ == "__main__":
     import json
