@@ -1,6 +1,7 @@
 from GetData import GetData
 from DataLoader import DataLoader
 from PreProcessing import PreProcessing
+from Model import Model
 
 import os
 import json
@@ -10,6 +11,8 @@ import pandas as pd
 if __name__ == "__main__":
     configs = json.load(open('config.json', 'r'))
 
+    # download and process all the datasets involved
+    # includes AMZN
     GetData(configs['data']['symbol'],
                         configs['data']['start'],
                         configs['data']['end'],
@@ -23,6 +26,7 @@ if __name__ == "__main__":
 
     all_data = {configs['data']['symbol']: preprocessing.denoised}
 
+    # and the correlated ones
     for correlate in configs['data']['correlates_to']:
         GetData(correlate,
                 configs['data']['start'],
@@ -31,13 +35,21 @@ if __name__ == "__main__":
         dataloader = DataLoader(os.path.join(configs['data']['save_dir'], correlate + '.csv'),
                         configs['data']['train_test_split'],
                         configs['data']['column'])
-        preprocessing.denoise(amzn_dataloader.data, configs)
+        preprocessing = PreProcessing()
+        preprocessing.denoise(dataloader.data, configs)
         all_data.update({correlate: preprocessing.denoised})
 
-    # save all data preprocessing
+    # save all data preprocessed
     dataframe = pd.DataFrame(all_data)
-    dataframe.to_csv(os.path.join(configs['preprocessing']['save_dir'], configs['preprocessing']['filename']),
-                        index=False)
+    filename = os.path.join(configs['preprocessing']['save_dir'], configs['preprocessing']['filename'])
+    dataframe.to_csv(filename, index=False)
+
+    dataloader = DataLoader(filename,
+                            configs['data']['train_test_split'],
+                            configs['data']['correlates_to'])
+
+    X_train, y_train = dataloader.get_train_data(configs['data']['sequence_length'])
+    print(X_train.shape, y_train.shape)
 
     '''close = data_amzn.stock_data.Close
     preprocess = PreProcessing()

@@ -21,8 +21,12 @@ class PreProcessing:
         if len(denoised) > len(scaled):
             denoised = denoised[:-1]
 
-        self.scaled = scaled.flatten()
-        self.denoised = denoised.flatten()
+        # what???!!!
+        if len(denoised.shape) > 1:
+            denoised = [x[0] for x in denoised]
+
+        self.scaled = scaled
+        self.denoised = denoised
 
 if __name__ == "__main__":
     stock_data = pd.read_csv('./data/MSI.csv')
@@ -33,6 +37,8 @@ if __name__ == "__main__":
 
     preprocess = PreProcessing()
     preprocess.denoise(close,configs)
+
+    print(close.shape, preprocess.denoised.shape)
 
     import matplotlib.pyplot as plt
     plt.plot(preprocess.denoised, color='blue')
