@@ -19,7 +19,7 @@ if __name__ == "__main__":
                         configs).get_stock_data()
     amzn_dataloader = DataLoader(os.path.join(configs['data']['save_dir'], configs['data']['symbol'] + '.csv'),
                         configs['data']['train_test_split'],
-                        configs['data']['column'])
+                        configs['data']['columns'])
 
     preprocessing = PreProcessing()
     preprocessing.denoise(amzn_dataloader.data, configs)
@@ -34,7 +34,7 @@ if __name__ == "__main__":
                 configs).get_stock_data()
         dataloader = DataLoader(os.path.join(configs['data']['save_dir'], correlate + '.csv'),
                         configs['data']['train_test_split'],
-                        configs['data']['column'])
+                        configs['data']['columns'])
         preprocessing = PreProcessing()
         preprocessing.denoise(dataloader.data, configs)
         all_data.update({correlate: preprocessing.denoised})
@@ -48,8 +48,24 @@ if __name__ == "__main__":
                             configs['data']['train_test_split'],
                             configs['data']['correlates_to'])
 
+    # get train data
     X_train, y_train = dataloader.get_train_data(configs['data']['sequence_length'])
     print(X_train.shape, y_train.shape)
+
+    model = Model()
+    # build model
+    model.build(configs)
+    # training model
+    model.train(X_train,
+                y_train,
+                epochs=configs['training']['epochs'],
+                batch_size=configs['training']['batch_size'],
+                save_dir=configs['model']['save_dir'])
+
+    '''import matplotlib.pyplot as plt
+    dataframe.plot()
+    plt.grid(True)
+    plt.show()'''
 
     '''close = data_amzn.stock_data.Close
     preprocess = PreProcessing()

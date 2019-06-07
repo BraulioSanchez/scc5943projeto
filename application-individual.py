@@ -18,7 +18,7 @@ if __name__ == "__main__":
                         configs).get_stock_data()
     dataloader = DataLoader(os.path.join(configs['data']['save_dir'], configs['data']['symbol'] + '.csv'),
                         configs['data']['train_test_split'],
-                        configs['data']['column'])
+                        configs['data']['columns'])
 
     preprocessing = PreProcessing()
     preprocessing.denoise(dataloader.data, configs)
@@ -32,10 +32,21 @@ if __name__ == "__main__":
 
     dataloader = DataLoader(filename,
                             configs['data']['train_test_split'],
-                            configs['data']['column'])
+                            configs['data']['columns'])
 
+    # get train data
     X_train, y_train = dataloader.get_train_data(configs['data']['sequence_length'])
     print(X_train.shape, y_train.shape)
+
+    model = Model()
+    # build model
+    model.build(configs)
+    # training model
+    model.train(X_train,
+                y_train,
+                epochs=configs['training']['epochs'],
+                batch_size=configs['training']['batch_size'],
+                save_dir=configs['model']['save_dir'])
 
     '''close = data_amzn.stock_data.Close
     preprocess = PreProcessing()

@@ -2,6 +2,9 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout, LSTM, RepeatVector, TimeDistributed
 import tensorflow as tf
 
+import os
+import datetime as dt
+
 tf.logging.set_verbosity(tf.logging.ERROR)
 
 class Model():
@@ -32,6 +35,15 @@ class Model():
                     self.model.add(TimeDistributed(Dense(units=neurons, activation=activation)))
 
         self.model.compile(loss=configs['model']['loss'], optimizer=configs['model']['optimizer'])
+
+    def train(self, X, y, epochs, batch_size, save_dir):
+        self.model.fit(X, y, epochs=epochs, batch_size=batch_size)
+
+        save_model = os.path.join(save_dir, dt.datetime.now().strftime('%d%m%Y-%H%M%S'), '.h5')
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+
+        self.model.save(save_model)
 
 
 if __name__ == "__main__":
