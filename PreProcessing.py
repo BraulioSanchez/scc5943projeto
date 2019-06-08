@@ -6,8 +6,9 @@ from sklearn.preprocessing import MinMaxScaler
 class PreProcessing:
     def denoise(self, series, configs):
         #performs scale
-        scaler = MinMaxScaler(feature_range=(-1,1))
-        scaled = scaler.fit_transform(np.array(series).reshape(-1,1)).reshape(series.shape)
+        #scaler = MinMaxScaler(feature_range=(-1,1))
+        #scaled = scaler.fit_transform(np.array(series).reshape(-1,1)).reshape(series.shape)
+        scaled = (series - series.mean()) / (series.max() - series.min())
 
         #WaveShrink
         cA, cD = pywt.dwt(scaled, configs['preprocessing']['denoise']['wavelet'])
@@ -29,7 +30,7 @@ class PreProcessing:
         self.denoised = denoised
 
 if __name__ == "__main__":
-    stock_data = pd.read_csv('./data/MSI.csv')
+    stock_data = pd.read_csv('./data/V.csv')
     close = stock_data.Close
 
     import json
