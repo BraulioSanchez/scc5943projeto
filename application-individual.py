@@ -23,7 +23,7 @@ if __name__ == "__main__":
     preprocessing = PreProcessing()
     preprocessing.denoise(dataloader.data, configs)
 
-    all_data = {configs['data']['column'][0]: preprocessing.denoised}
+    all_data = {configs['data']['columns'][0]: preprocessing.denoised}
 
     # save all data preprocessed
     dataframe = pd.DataFrame(all_data)

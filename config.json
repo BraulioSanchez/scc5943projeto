@@ -25,7 +25,7 @@
 	"preprocessing": {
 		"denoise": {
 			"wavelet": "haar",
-			"thr_mode": "garotte"
+			"thr_mode": "hard"
 		},
 		"filename": "preprocessed.csv",
 		"save_dir": "preprocessing"
