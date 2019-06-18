@@ -6,7 +6,7 @@
 		],
 		"start": "2008-04-01",
 		"end": "2019-10-01",
-		"sequence_length": 6,
+		"sequence_length": 5,
 		"train_test_split": 0.85,
 		"save_dir": "data",
 		"correlates_to": [
@@ -25,7 +25,7 @@
 	"preprocessing": {
 		"denoise": {
 			"wavelet": "haar",
-			"thr_mode": "hard"
+			"thr_mode": "garotte"
 		},
 		"filename": "preprocessed.csv",
 		"save_dir": "preprocessing"
@@ -43,7 +43,7 @@
 				"type": "lstm",
 				"neurons": 100,
 				"activation": "relu",
-				"input_timesteps": 5,
+				"input_timesteps": 4,
 				"input_dim": 1,
 				"return_sequences": false
 			},

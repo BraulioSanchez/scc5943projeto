@@ -1,7 +1,7 @@
-from GetData import GetData
-from DataLoader import DataLoader
-from PreProcessing import PreProcessing
-from Model import Model
+from get_data import GetData
+from data_loader import DataLoader
+from pre_processing import PreProcessing
+from model import Model
 
 import os
 import json

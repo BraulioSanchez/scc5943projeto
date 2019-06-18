@@ -1,13 +1,10 @@
 import numpy as np
 import pandas as pd
 import pywt
-from sklearn.preprocessing import MinMaxScaler
 
 class PreProcessing:
     def denoise(self, series, configs):
-        #performs scale
-        #scaler = MinMaxScaler(feature_range=(-1,1))
-        #scaled = scaler.fit_transform(np.array(series).reshape(-1,1)).reshape(series.shape)
+        #perform normalization
         normalized = (series - series.mean()) / (series.max() - series.min())
 
         #WaveShrink

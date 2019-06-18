@@ -52,7 +52,13 @@ if __name__ == "__main__":
     print(dataloader.data.shape, dataloader.data_train.shape, dataloader.data_test.shape)
     
     X_train, y_train = dataloader.get_train_data(configs['data']['sequence_length'])
+    print('train:')
     print(X_train.shape, y_train.shape)
+    print(X_train[:2])
+    print(y_train[:2])
 
     X_test, y_test = dataloader.get_test_data(configs['data']['sequence_length'])
+    print('test:')
     print(X_test.shape, y_test.shape)
+    print(X_test[:2])
+    print(y_test[:2])
