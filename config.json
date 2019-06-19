@@ -6,8 +6,9 @@
 		],
 		"start": "2008-04-01",
 		"end": "2019-10-01",
-		"sequence_length": 6,
-		"train_test_split": 0.85,
+		"train_test_split": 2795,
+		"inputs": 15,
+		"days": 5,
 		"save_dir": "data",
 		"correlates_to": [
 			"NOV",
@@ -31,8 +32,9 @@
 		"save_dir": "preprocessing"
 	},
 	"training": {
-		"epochs": 2,
-		"batch_size": 32
+		"epochs": 100,
+		"batch_size": 32,
+		"verbose": 1
 	},
 	"model": {
 		"loss": "mae",
@@ -41,10 +43,14 @@
 		"layers": [
 			{
 				"type": "lstm",
-				"neurons": 100,
+				"neurons": 128,
 				"activation": "relu",
-				"input_timesteps": 5,
-				"input_dim": 1,
+				"return_sequences": true
+			},
+			{
+				"type": "lstm",
+				"neurons": 64,
+				"activation": "relu",
 				"return_sequences": false
 			},
 			{
@@ -53,9 +59,27 @@
 			},
 			{
 				"type": "lstm",
-				"neurons": 100,
+				"neurons": 64,
 				"activation": "relu",
 				"return_sequences": true
+			},
+			{
+				"type": "lstm",
+				"neurons": 128,
+				"activation": "relu",
+				"return_sequences": true
+			},
+			{
+				"type": "time_distributed",
+				"layer": {
+					"type": "dense",
+					"neurons": 128,
+					"activation": "relu"
+				}
+			},
+			{
+				"type": "dropout",
+				"rate": 0.5
 			},
 			{
 				"type": "time_distributed",

@@ -8,7 +8,7 @@ import json
 import numpy as np
 import pandas as pd
 
-if __name__ == "__main__":
+def main():
     configs = json.load(open('config.json', 'r'))
 
     # download and process all the datasets involved
@@ -18,7 +18,6 @@ if __name__ == "__main__":
                         configs['data']['end'],
                         configs).get_stock_data()
     amzn_dataloader = DataLoader(os.path.join(configs['data']['save_dir'], configs['data']['symbol'] + '.csv'),
-                        configs['data']['train_test_split'],
                         configs['data']['columns'])
 
     preprocessing = PreProcessing()
@@ -33,7 +32,6 @@ if __name__ == "__main__":
                 configs['data']['end'],
                 configs).get_stock_data()
         dataloader = DataLoader(os.path.join(configs['data']['save_dir'], correlate + '.csv'),
-                        configs['data']['train_test_split'],
                         configs['data']['columns'])
         preprocessing = PreProcessing()
         preprocessing.denoise(dataloader.data, configs)
@@ -45,36 +43,31 @@ if __name__ == "__main__":
     dataframe.to_csv(filename, index=False)
 
     dataloader = DataLoader(filename,
-                            configs['data']['train_test_split'],
                             configs['data']['correlates_to'])
-
-    # get train data
-    X_train, y_train = dataloader.get_train_data(configs['data']['sequence_length'])
-    print(X_train.shape, y_train.shape)
+    dataloader.train_test_split(configs['data']['days'], configs['data']['train_test_split'])
 
     model = Model()
-    # build model
-    model.build(configs)
-    # training model
-    model.train(X_train,
-                y_train,
-                epochs=configs['training']['epochs'],
-                batch_size=configs['training']['batch_size'],
-                save_dir=configs['model']['save_dir'])
+    # build and train model
+    model.build(configs, dataloader)
 
-    '''import matplotlib.pyplot as plt
-    dataframe.plot()
-    plt.grid(True)
-    plt.show()'''
+    from keras.utils import plot_model
+    plot_model(model.model, show_shapes=True, to_file="autoencoder-lstm-multivariable-for-prediction.png")
 
-    '''close = data_amzn.stock_data.Close
-    preprocess = PreProcessing()
-    preprocess.denoise(close)
-    preprocess.to_csv()
+    yhat = model.predict(dataloader.train, dataloader.test, configs['data']['inputs'])
 
     import matplotlib.pyplot as plt
-    plt.plot(preprocess.preprocessed.scaled, color='red')
-    plt.plot(preprocess.preprocessed.denoised, color='blue')
-    plt.legend(['Scaled prices', 'Denoised prices'])
-    plt.grid(True)
-    plt.show()'''
+    plt.figure(figsize=(10,8))
+    plt.plot(dataloader.test[0,:,0].flatten(), label = 'Real')
+    plt.plot(yhat.flatten(), label = 'Predicted')
+    plt.legend()
+    plt.show()
+
+    yhat = model.predict(dataloader.train, dataloader.train, configs['data']['inputs'])
+    plt.figure(figsize=(10,8))
+    plt.plot(dataloader.train[0,:,0].flatten(), label = 'Real')
+    plt.plot(yhat.flatten(), label = 'Predicted')
+    plt.legend()
+    plt.show()
+
+if __name__ == "__main__":
+    main()

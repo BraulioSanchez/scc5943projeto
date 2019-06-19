@@ -1,3 +1,5 @@
 keras
 tensorflow
-pywt
+PyWavelets
+fix_yahoo_finance                                                                                                                                                                                                                             
+pandas-datareader

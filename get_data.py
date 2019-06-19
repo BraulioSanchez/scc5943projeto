@@ -3,7 +3,7 @@ import fix_yahoo_finance as fix
 import os
 
 # make pandas datareader optional
-fix.pdr_override()
+#fix.pdr_override()
 
 
 class GetData:
